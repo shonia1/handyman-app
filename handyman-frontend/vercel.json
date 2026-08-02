@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/google(.+)", "destination": "/google$1.html" }]
+}
