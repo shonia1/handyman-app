@@ -105,7 +105,7 @@ function Navbar() {
                   to="/post-job"
                   className="bg-white text-indigo-700 px-5 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
                 >
-                  + ახალი დავალება
+                  + ახალი შეკვეთა
                 </Link>
               )}
 

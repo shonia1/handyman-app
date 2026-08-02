@@ -8,7 +8,8 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import Home from "./components/Home";
-import ProtectedRoute from "./components/ProtectedRoute"; // 🔥 დაამატეთ ეს
+import ProtectedRoute from "./components/ProtectedRoute";
+import ClientDashboard from "./components/ClientDashboard"; // 🔥 ახალი იმპორტი
 import { lazy, Suspense } from "react";
 
 function App() {
@@ -22,7 +23,16 @@ function App() {
           <Route path="/jobs" element={<JobList />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
           
-          {/* 🔥 შეფუთეთ JobForm ProtectedRoute-ში */}
+          {/* 🔥 დაამატეთ ახალი დაცული მარშრუტი კლიენტისთვის */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <ClientDashboard />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/create"
             element={
