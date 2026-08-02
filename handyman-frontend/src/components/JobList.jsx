@@ -70,7 +70,7 @@ function JobList() {
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl">
       <SEO
-        title="დავალებები – Handyman"
+        title="Handyman"
         description="ნახეთ ყველა აქტიური დავალება. აირჩიეთ თქვენთვის სასურველი კატეგორია და ლოკაცია."
         url="/"
       />

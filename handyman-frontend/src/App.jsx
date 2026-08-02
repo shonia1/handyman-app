@@ -7,6 +7,7 @@ import JobForm from "./components/JobForm";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import GoogleAnalytics from "./components/GoogleAnalytics";
+import Home from "./components/Home"; // 🔥 ეს ხაზი დაამატეთ!
 import { lazy, Suspense } from "react";
 
 function App() {
@@ -22,9 +23,10 @@ function App() {
         }
       >
         <Routes>
-          <Route path="/" element={<JobList />} />
+          <Route path="/" element={<Home />} />          {/* 🔥 მთავარი გვერდი */}
+          <Route path="/jobs" element={<JobList />} />   {/* 🔥 დავალებების სია */}
           <Route path="/jobs/:id" element={<JobDetails />} />
-          <Route path="/post-job" element={<JobForm />} />
+          <Route path="/create" element={<JobForm />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>
