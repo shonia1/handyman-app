@@ -1,3 +1,4 @@
+// src/context/AuthProvider.jsx
 import { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
 import api from '../api/axios';
@@ -21,7 +22,18 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(data));
       }
     } catch (error) {
-      console.error('Error refreshing user:', error);
+      // 🔥 თუ ბექენდიდან მოდის 403 (Banned) ან გვაქვს isBanned
+      if (error.response && (error.response.status === 403 || error.response.data?.isBanned)) {
+        alert("⚠️ თქვენი ანგარიში დაბლოკილია ადმინის მიერ. გთხოვთ, დაუკავშირდით ადმინს.");
+        logout(); // მაშინვე ვასუფთავებთ მონაცემებს
+        return;
+      }
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        delete api.defaults.headers.common['Authorization'];
+        setUser(null);
+      }
     }
   };
 
@@ -43,8 +55,12 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
         }
       } catch (error) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        if (error.response?.status === 403 || error.response?.data?.isBanned) {
+          logout();
+        } else if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
         setLoading(false);
       }
     };
@@ -53,6 +69,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const response = await api.post('/auth/login', { email, password });
+    // აქ თუ ბექენდი 403-ს გაისვრის, ის მაინც მოხვდება try/catch-ში
     const { token, data } = response.data;
     if (data.profession && !Array.isArray(data.profession)) data.profession = [data.profession];
     if (!data.profession) data.profession = [];

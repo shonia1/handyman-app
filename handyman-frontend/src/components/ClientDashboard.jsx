@@ -40,7 +40,7 @@ const ClientDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">ჩემი დავალებები</h2>
+        <h2 className="text-2xl font-bold text-gray-800">ჩემი განცხადებები</h2>
         <Link to="/create" className="px-4 py-2 bg-blue-600 text-white font-bold rounded-full shadow hover:bg-blue-700">+ ახალი შეკვეთა</Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

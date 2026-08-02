@@ -80,6 +80,15 @@ exports.login = async (req, res) => {
       return res.status(401).json({ success: false, error: "Invalid credentials" });
     }
 
+    // 🔥 მოწმდება, დაბლოკილია თუ არა მომხმარებელი შესვლამდე
+    if (user.isBanned) {
+      return res.status(403).json({
+        success: false,
+        error: "Account is banned. Contact admin.",
+        isBanned: true,
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ success: false, error: "Invalid credentials" });
