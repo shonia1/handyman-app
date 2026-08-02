@@ -92,25 +92,15 @@ exports.getJobs = async (req, res) => {
     if (search) filter.title = { $regex: search, $options: "i" };
     if (cityFilter) filter.district = cityFilter;
 
-    // 🔥 არქივის ფილტრი – სწორი ლოგიკა
+    // 🔥 არქივის ფილტრი
     if (showArchived) {
-      // თუ არქივი ჩართულია – ვაჩვენოთ მხოლოდ დასრულებული/გაუქმებული
       filter.status = { $in: ["completed", "cancelled"] };
     } else {
-      // თუ არქივი გამორთულია – არ ვაჩვენოთ დასრულებული/გაუქმებული
       filter.status = { $nin: ["completed", "cancelled"] };
     }
 
-    // Optional authentication (for craftsman profession filtering)
-    let user = null;
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      const token = authHeader.split(" ")[1];
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id);
-      } catch (err) {}
-    }
+    // 🔥 მთავარი ცვლილება: ვიყენებთ მიდლვერისგან მოსულ req.user-ს
+    const user = req.user || null;
 
     if (user && user.role === "craftsman") {
       if (user.profession && user.profession.length > 0) {
@@ -120,6 +110,7 @@ exports.getJobs = async (req, res) => {
       }
     }
 
+    // 🔥 ეს ფილტრი საშუალებას მისცემს კლიენტს დაინახოს საკუთარი შეკვეთები
     if (user && user.role === "client" && myJobs) {
       filter.client = user.id;
     }
@@ -148,15 +139,8 @@ exports.getJobs = async (req, res) => {
 // ──────────────────────────────────────────────────────
 exports.getJob = async (req, res) => {
   try {
-    let user = null;
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      const token = authHeader.split(" ")[1];
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        user = await User.findById(decoded.id).select("-password");
-      } catch (err) {}
-    }
+    // 🔥 მთავარი ცვლილება: ასევე ვიყენებთ მიდლვერის req.user-ს
+    const user = req.user || null;
 
     const job = await Job.findById(req.params.id);
     if (!job) {

@@ -1,37 +1,36 @@
 // src/components/ClientDashboard.jsx
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios"; // 🔥 პირდაპირი axios-ის ნაცვლად ვიყენებთ api-ს!
+import { useAuth } from "../hooks/useAuth";
 
 const ClientDashboard = () => {
+  const { user } = useAuth(); // 🔥 მომხმარებლის მონიტორინგისთვის
   const [myJobs, setMyJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchMyJobs = async () => {
+    try {
+      const response = await api.get("/jobs", {
+        params: { myJobs: true, limit: 50 },
+      });
+      setMyJobs(response.data.data || []);
+    } catch (err) {
+      console.error("Error fetching my jobs:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔥 დავამატეთ user?._id დამოკიდებულება, რათა შეკვეთის შექმნის შემდეგ მაშინვე განახლდეს
   useEffect(() => {
-    const fetchMyJobs = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        // 🔥 აქ შევცვალეთ მისამართი და პარამეტრები!
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/jobs`,
-          { 
-            params: { myJobs: true, limit: 50 }, 
-            headers: { Authorization: `Bearer ${token}` } 
-          }
-        );
-        setMyJobs(response.data.data || []);
-      } catch (err) {
-        console.error("Error fetching my jobs:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMyJobs();
-  }, []);
+    if (user) {
+      fetchMyJobs();
+    }
+  }, [user]); 
 
   if (loading) return <div className="text-center py-20">იტვირთება...</div>;
 
-  // 🔥 თუ დავალებები არ არის, აჩვენე მხოლოდ შეკვეთის შექმნის შეთავაზება
   if (myJobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
@@ -49,7 +48,6 @@ const ClientDashboard = () => {
     );
   }
 
-  // 🔥 თუ დავალებები აქვს, აჩვენე მათი სია
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
