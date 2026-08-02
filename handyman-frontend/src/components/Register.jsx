@@ -7,7 +7,8 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("client"); // როლის ცვლადი
+  const [phone, setPhone] = useState(""); // 🔥 ტელეფონის ველი
+  const [role, setRole] = useState("client"); 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,6 +25,7 @@ const Register = () => {
         name, 
         email, 
         password, 
+        phone,   // 🔥 ვაგზავნით ტელეფონსაც
         role 
       });
       
@@ -96,7 +98,22 @@ const Register = () => {
             />
           </div>
 
-          {/* 🔥 როლის არჩევის ველი გადავიტანეთ პაროლის შემდეგ */}
+          {/* 🔥 ტელეფონის ველი */}
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              მობილური ნომერი
+            </label>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              placeholder="შეიყვანეთ მობილურის ნომერი (მაგ. 595...) "
+            />
+          </div>
+
+          {/* 🔥 როლის არჩევის ველი (ისევ ბოლოში) */}
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2">
               ვინ ხართ?
