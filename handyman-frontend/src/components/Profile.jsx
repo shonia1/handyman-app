@@ -15,9 +15,11 @@ const Profile = () => {
     profession: [],
   });
 
+  // 🔥 დავამატეთ confirmPassword ველი
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
+    confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -79,20 +81,29 @@ const Profile = () => {
     }
   };
 
-  // პაროლის შენახვა
+  // 🔥 პაროლის შენახვა (დამატებულია ვალიდაცია)
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    if (!passwordData.currentPassword || !passwordData.newPassword) {
-      setMessage({ type: "error", text: "❌ გთხოვთ, შეავსოთ ორივე ველი!" });
+    
+    // ველების შემოწმება
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      setMessage({ type: "error", text: "❌ გთხოვთ, შეავსოთ ყველა ველი!" });
       return;
     }
+
+    // 🔥 ახალი პაროლების შედარება
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setMessage({ type: "error", text: "❌ ახალი პაროლები არ ემთხვევა ერთმანეთს!" });
+      return;
+    }
+
     setPasswordLoading(true);
     setMessage({ type: "", text: "" });
 
     try {
       await api.put("/auth/password", passwordData);
       setMessage({ type: "success", text: "✅ პაროლი წარმატებით განახლდა!" });
-      setPasswordData({ currentPassword: "", newPassword: "" });
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
       setIsPasswordChanging(false);
     } catch (err) {
       setMessage({ 
@@ -242,6 +253,18 @@ const Profile = () => {
                       type="password"
                       name="newPassword"
                       value={passwordData.newPassword}
+                      onChange={handlePasswordChange}
+                      required
+                      className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                    />
+                  </div>
+                  {/* 🔥 დამატებულია ახალი პაროლის დადასტურების ველი */}
+                  <div>
+                    <label className="block text-gray-500 text-sm mb-1">გაიმეორეთ ახალი პაროლი</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
                       required
                       className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
