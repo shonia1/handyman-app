@@ -12,6 +12,9 @@ const userSchema = new mongoose.Schema(
     profession: { type: [String], default: [] },
     cities: { type: [String], default: [] },
     telegramChatId: { type: String, default: null },
+    isBanned: { type: Boolean, default: false },
+    banReason: { type: String, default: null },
+    bannedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );

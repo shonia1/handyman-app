@@ -35,14 +35,13 @@ exports.createJob = async (req, res) => {
           return;
         }
 
+        // 🔥 შეცვლილი შეტყობინება: ამოღებულია კლიენტის სახელი და ტელეფონი
         const message = `
 🔨 *New Job Posted!*
 📌 *Title:* ${job.title}
 📂 *Category:* ${job.category}
 📍 *District:* ${job.district}
 💰 *Budget:* ${job.budget} GEL
-👤 *Client:* ${job.clientName}
-📞 *Phone:* ${job.clientPhone}
 📝 *Description:* ${job.description.substring(0, 200)}${job.description.length > 200 ? "..." : ""}
 📅 *Posted:* ${new Date(job.createdAt).toLocaleString()}
         `;
@@ -92,14 +91,12 @@ exports.getJobs = async (req, res) => {
     if (search) filter.title = { $regex: search, $options: "i" };
     if (cityFilter) filter.district = cityFilter;
 
-    // 🔥 არქივის ფილტრი
     if (showArchived) {
       filter.status = { $in: ["completed", "cancelled"] };
     } else {
       filter.status = { $nin: ["completed", "cancelled"] };
     }
 
-    // 🔥 მთავარი ცვლილება: ვიყენებთ მიდლვერისგან მოსულ req.user-ს
     const user = req.user || null;
 
     if (user && user.role === "craftsman") {
@@ -110,9 +107,9 @@ exports.getJobs = async (req, res) => {
       }
     }
 
-    // 🔥 ეს ფილტრი საშუალებას მისცემს კლიენტს დაინახოს საკუთარი შეკვეთები
+    // 🔥 ფილტრი კლიენტისთვის (user._id-ით)
     if (user && user.role === "client" && myJobs) {
-      filter.client = user.id;
+      filter.client = user._id; 
     }
 
     const skip = (page - 1) * limit;
@@ -139,7 +136,6 @@ exports.getJobs = async (req, res) => {
 // ──────────────────────────────────────────────────────
 exports.getJob = async (req, res) => {
   try {
-    // 🔥 მთავარი ცვლილება: ასევე ვიყენებთ მიდლვერის req.user-ს
     const user = req.user || null;
 
     const job = await Job.findById(req.params.id);
