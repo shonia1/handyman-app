@@ -69,17 +69,18 @@ function JobList() {
 
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl">
+      {/* 🔥 შეცვლილია title */}
       <SEO
-        title="Handyman"
-        description="ნახეთ ყველა აქტიური დავალება. აირჩიეთ თქვენთვის სასურველი კატეგორია და ლოკაცია."
-        url="/"
+        title="განცხადებები – Handyman" 
+        description="ნახეთ ყველა აქტიური განცხადება. აირჩიეთ თქვენთვის სასურველი კატეგორია და ლოკაცია."
+        url="/jobs"
       />
       <Breadcrumbs />
       <TelegramBanner />
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
-          {user?.role === "client" ? "📋 ჩემი დავალებები" : "📋 დავალებები"}
+          {user?.role === "client" ? "📋 ჩემი დავალებები" : "📋 განცხადებები"}
         </h1>
         <div className="flex items-center gap-2 flex-wrap">
           <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
@@ -153,24 +154,24 @@ function JobList() {
         )}
       </div>
 
-      {/* Job Cards - Mobile Optimized */}
+      {/* Job Cards... */}
       {jobs.length === 0 ? (
         <div className="text-center py-12 sm:py-20 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
           <p className="text-gray-400 text-lg sm:text-xl">
             {user?.role === "client"
               ? showArchived
                 ? "📭 არქივში არ არის დავალებები"
-                : "📭 ჯერ არ გაგივრცელებიათ დავალება"
+                : "📭 ჯერ არ გაგივრცელებიათ განცხადება"
               : search || category
                 ? "☝️ ვერაფერი მოიძებნა"
-                : "🤷‍♂️ ჯერ არ არის დავალებები"}
+                : "🤷‍♂️ ჯერ არ არის განცხადებები"}
           </p>
           {user?.role === "client" && !showArchived && (
             <Link
-              to="/post-job"
+              to="/create"
               className="text-indigo-600 hover:underline mt-2 inline-block text-sm"
             >
-              + დაამატეთ პირველი დავალება
+              + დაამატეთ პირველი განცხადება
             </Link>
           )}
           {!user && (
@@ -239,29 +240,7 @@ function JobList() {
           ))}
         </div>
       )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-3 sm:gap-4 mt-6 sm:mt-8">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-50 transition"
-          >
-            ← წინა
-          </button>
-          <span className="text-gray-700 text-xs sm:text-sm font-medium">
-            {page} / {totalPages}
-          </span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-50 transition"
-          >
-            შემდეგი →
-          </button>
-        </div>
-      )}
+      {/* ... პაგინაცია ... */}
     </div>
   );
 }
