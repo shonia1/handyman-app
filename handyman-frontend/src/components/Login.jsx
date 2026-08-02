@@ -1,69 +1,111 @@
 // src/components/Login.jsx
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from '../hooks/useAuth';
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
-function Login() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // 1. გავიგოთ, საიდან მოვიდა მომხმარებელი (მაგალითად /create-დან)
+  const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setError(null);
+
     try {
-      await login(email, password);
-      navigate("/");
+      // 2. გავაგზავნოთ მოთხოვნა ბექენდზე
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
+        { email, password }
+      );
+
+      // 3. წარმატების შემთხვევაში, შევინახოთ ტოკენი
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        // 4. დავაბრუნოთ მომხმარებელი იქ, საიდანაც მოვიდა
+        navigate(from, { replace: true });
+      } else {
+        setError("მოხდა შეცდომა. გთხოვთ, სცადოთ თავიდან.");
+      }
     } catch (err) {
-      setError(err.response?.data?.error || err.message);
+      // 5. შეცდომის მართვა
+      setError(
+        err.response?.data?.message || 
+        "ავტორიზაცია ვერ მოხერხდა. შეამოწმეთ მონაცემები."
+      );
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-md">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">🔐 შესვლა</h1>
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4 text-sm">
-          {error}
+    <div className="flex justify-center items-center min-h-[80vh] bg-gray-50 px-4">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100">
+        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
+          შესვლა
+        </h2>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm border border-red-200">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              ელ-ფოსტა
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              placeholder="თქვენი ელ-ფოსტა"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              პაროლი
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              placeholder="თქვენი პაროლი"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "იტვირთება..." : "შესვლა"}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
+          არ გაქვთ ანგარიში?{" "}
+          <Link to="/register" className="text-blue-600 font-semibold hover:underline">
+            რეგისტრაცია
+          </Link>
         </div>
-      )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Email *"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full border p-3 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-        />
-        <input
-          type="password"
-          placeholder="პაროლი *"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full border p-3 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition disabled:opacity-50 text-sm sm:text-base"
-        >
-          {loading ? "იტვირთება..." : "შესვლა"}
-        </button>
-      </form>
-      <p className="mt-4 text-center text-sm">
-        არ გაქვთ ანგარიში?{" "}
-        <Link to="/register" className="text-indigo-600 hover:underline">
-          რეგისტრაცია
-        </Link>
-      </p>
+      </div>
     </div>
   );
-}
+};
+
 export default Login;
