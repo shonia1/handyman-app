@@ -70,13 +70,40 @@ const AdminDashboard = () => {
     }
   };
 
+  // 🔥 განახლებული გასუფთავების ფუნქცია მათემატიკური ამოცანით
   const handleCleanup = async () => {
+    // ნაბიჯი 1: პირველადი დადასტურება
     if (!window.confirm("⚠️ ეს წაშლის ყველა მომხმარებელსა და განცხადებას! დარწმუნებული ხართ?")) return;
-    const code = prompt("დადასტურებისთვის ჩაწერეთ: DELETE_ALL");
-    if (code !== "DELETE_ALL") return alert("კოდი არასწორია");
+
+    // ნაბიჯი 2: რანდომული მათემატიკური ამოცანის გენერაცია
+    const num1 = Math.floor(Math.random() * 10) + 1; // 1-დან 10-მდე
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    const operators = ['+', '-', '*'];
+    const operator = operators[Math.floor(Math.random() * operators.length)];
+    
+    let correctAnswer;
+    if (operator === '+') correctAnswer = num1 + num2;
+    else if (operator === '-') correctAnswer = num1 - num2;
+    else if (operator === '*') correctAnswer = num1 * num2;
+
+    // ნაბიჯი 3: ვთხოვთ მომხმარებელს ამოცანის ამოხსნას
+    const userAnswer = prompt(`🔐 უსაფრთხოების მიზნით, გთხოვთ ამოხსნათ მათემატიკური ამოცანა:\n\n${num1} ${operator} ${num2} = ?`);
+
+    // ნაბიჯი 4: პასუხის შემოწმება
+    if (userAnswer === null) {
+      alert("ოპერაცია გაუქმდა.");
+      return; // მომხმარებელმა დააჭირა Cancel
+    }
+
+    if (parseInt(userAnswer) !== correctAnswer) {
+      alert("❌ პასუხი არასწორია! ოპერაცია გაუქმდა.");
+      return;
+    }
+
+    // ნაბიჯი 5: თუ პასუხი სწორია, ვაგრძელებთ
     try {
-      await api.post("/admin/cleanup", { confirmKey: code });
-      alert("ბაზა გასუფთავდა!");
+      await api.post("/admin/cleanup", { confirmKey: "DELETE_ALL" });
+      alert("✅ ბაზა წარმატებით გასუფთავდა!");
       fetchData();
     } catch (err) {
       alert("შეცდომა: " + (err.response?.data?.error || "გასუფთავება ვერ მოხერხდა"));
@@ -113,7 +140,6 @@ const AdminDashboard = () => {
             <thead className="bg-gray-100 text-gray-700"><tr><th className="p-3">სახელი</th><th>ელ-ფოსტა</th><th>როლი</th><th>სტატუსი</th><th className="text-right">მოქმედება</th></tr></thead>
             <tbody>
               {users.map(u => {
-                // 🔥 1. ადმინის დამალვა
                 if (u.role === "admin") return null; 
 
                 return (
@@ -160,7 +186,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* 🔥 დეტალების მოდალი (პროფილი) */}
+      {/* დეტალების მოდალი (პროფილი) */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setSelectedUser(null)}>
           <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
@@ -181,7 +207,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* 🔥 დეტალების მოდალი (განცხადება) */}
+      {/* დეტალების მოდალი (განცხადება) */}
       {selectedJob && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setSelectedJob(null)}>
           <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
