@@ -1,16 +1,18 @@
 // src/components/Register.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("client"); // როლის ცვლადი
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { register } = useAuth(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,20 +20,21 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // 1. რეგისტრაციის მოთხოვნა
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
-        { name, email, password }
-      );
-
-      // 2. წარმატების შემთხვევაში, გადავიყვანოთ ლოგინის გვერდზე
-      navigate("/login");
+      await register({ 
+        name, 
+        email, 
+        password, 
+        role 
+      });
+      
+      navigate("/", { replace: true });
     } catch (err) {
-      // 3. შეცდომის მართვა
-      setError(
-        err.response?.data?.message || 
-        "რეგისტრაცია ვერ მოხერხდა. სცადეთ თავიდან."
-      );
+      console.error("სრული შეცდომა:", err);
+      console.error("ბექენდის პასუხი:", err.response?.data);
+      
+      const serverMessage = err.response?.data?.message || err.response?.data?.error;
+      const fallbackMessage = "რეგისტრაცია ვერ მოხერხდა. სცადეთ თავიდან.";
+      setError(serverMessage || fallbackMessage);
     } finally {
       setLoading(false);
     }
@@ -91,6 +94,21 @@ const Register = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
               placeholder="შეიყვანეთ თქვენი პაროლი"
             />
+          </div>
+
+          {/* 🔥 როლის არჩევის ველი გადავიტანეთ პაროლის შემდეგ */}
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              ვინ ხართ?
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            >
+              <option value="client">კლიენტი (ვეძებ ხელოსანს)</option>
+              <option value="craftsman">ხელოსანი (ვეძებ შეკვეთას)</option>
+            </select>
           </div>
 
           <button

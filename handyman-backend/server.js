@@ -38,7 +38,17 @@ if (process.env.TELEGRAM_BOT_TOKEN) {
 }
 
 // ─── Middlewares ───
-app.use(cors());
+// 🔥 გავასწოროთ CORS, რათა ზუსტად მიუთითოს თქვენი ფრონტენდის მისამართი
+const corsOptions = {
+  origin: [
+    "https://handyman-ge.vercel.app", // თქვენი ახალი Vercel მისამართი
+    "http://localhost:5173", // ლოკალური დეველოპმენტის მისამართი
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // ─── Routes ───
