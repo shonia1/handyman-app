@@ -16,6 +16,7 @@ const authRoutes = require("./routes/authRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const sitemapRoutes = require("./routes/sitemapRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 // 1. ჯერ ვქმნით app-ს!
 const app = express();
@@ -58,6 +59,7 @@ app.use("/api/bids", bidRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/questions", questionRoutes);
+app.use("/api/admin", adminRoutes);
 
 // ─── Health check ───
 app.get("/api/health", (req, res) => {

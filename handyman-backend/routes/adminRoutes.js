@@ -1,7 +1,8 @@
+// routes/adminRoutes.js
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
-const { protect } = require("../middleware/authMiddleware"); // თქვენი არსებული Auth მიდლვერი
+const { protect } = require("../middleware/authMiddleware");
 
 // მიდლვერი როლის შესამოწმებლად
 const adminOnly = (req, res, next) => {
