@@ -75,7 +75,6 @@ const AdminDashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">🛡️ ადმინის პანელი</h1>
-
       <div className="flex flex-wrap gap-2 mb-6 border-b pb-2">
         {["stats", "users", "jobs"].map((t) => (
           <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-2 rounded-t-lg ${activeTab === t ? "bg-blue-600 text-white" : "bg-gray-200"}`}>

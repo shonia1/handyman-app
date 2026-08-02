@@ -1,10 +1,8 @@
-// routes/adminRoutes.js
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/auth"); 
 
-// მიდლვერი როლის შესამოწმებლად
 const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();
@@ -13,9 +11,7 @@ const adminOnly = (req, res, next) => {
   }
 };
 
-// ყველა მარშრუტი დაცულია protect + adminOnly-თი
 router.use(protect, adminOnly);
-
 router.get("/stats", adminController.getStats);
 router.get("/users", adminController.getAllUsers);
 router.patch("/users/:id/ban", adminController.banUser);

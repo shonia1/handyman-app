@@ -1,4 +1,3 @@
-// src/components/CraftsmanDashboard.jsx
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
@@ -12,19 +11,12 @@ const CraftsmanDashboard = () => {
   useEffect(() => {
     const fetchIncomingJobs = async () => {
       try {
-        const token = localStorage.getItem("token");
-        // მხოლოდ ღია და ხელოსნის ქალაქში არსებული შეკვეთები
         const params = {
           status: 'open',
-          city: user?.cities?.[0] || "", // თუ მითითებული აქვს ქალაქი
+          city: user?.cities?.[0] || "",
           limit: 20
         };
-        
-        const response = await api.get("/jobs", { 
-          params,
-          headers: { Authorization: `Bearer ${token}` } 
-        });
-        
+        const response = await api.get("/jobs", { params });
         setIncomingJobs(response.data.data || []);
       } catch (err) {
         console.error("Error fetching incoming jobs:", err);
@@ -32,45 +24,27 @@ const CraftsmanDashboard = () => {
         setLoading(false);
       }
     };
-    
-    if (user) {
-      fetchIncomingJobs();
-    }
+    if (user) fetchIncomingJobs();
   }, [user]);
 
   if (loading) return <div className="text-center py-20">იტვირთება...</div>;
 
-  // 🔥 თუ არაფერია შემოსული
   if (incomingJobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
         <h2 className="text-2xl font-bold text-gray-700 mb-4">შეკვეთები ჯერ არ შემოსულა</h2>
-        <p className="text-gray-500 max-w-md mb-8">
-          როგორც კი თქვენს ქალაქში ახალი შეკვეთა გამოქვეყნდება, ის აქ გამოჩნდება.
-        </p>
-        <Link
-          to="/jobs"
-          className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition-all hover:scale-105"
-        >
-          იხილეთ ყველა დავალება
-        </Link>
+        <p className="text-gray-500 max-w-md mb-8">როგორც კი თქვენს ქალაქში ახალი შეკვეთა გამოქვეყნდება, ის აქ გამოჩნდება.</p>
+        <Link to="/jobs" className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition-all hover:scale-105">იხილეთ ყველა დავალება</Link>
       </div>
     );
   }
 
-  // 🔥 თუ შემოსულია, აჩვენე სია
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">📬 შემოსული შეკვეთები</h2>
-        <Link
-          to="/jobs"
-          className="px-4 py-2 bg-indigo-600 text-white font-bold rounded-full shadow hover:bg-indigo-700"
-        >
-          ყველა დავალება
-        </Link>
+        <Link to="/jobs" className="px-4 py-2 bg-indigo-600 text-white font-bold rounded-full shadow hover:bg-indigo-700">ყველა დავალება</Link>
       </div>
-      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {incomingJobs.map((job) => (
           <Link key={job._id} to={`/jobs/${job._id}`} className="block transform hover:scale-[1.02] transition duration-200">
@@ -92,5 +66,4 @@ const CraftsmanDashboard = () => {
     </div>
   );
 };
-
 export default CraftsmanDashboard;
