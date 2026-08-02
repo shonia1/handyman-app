@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/google(.+)", "destination": "/google$1.html" },
-    { "source": "/site.webmanifest", "destination": "/site.webmanifest" }
+    { "source": "/site.webmanifest", "destination": "/site.webmanifest" },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
