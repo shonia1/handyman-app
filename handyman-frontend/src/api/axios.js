@@ -2,7 +2,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://handyman-back-p7yf.onrender.com", // 🔥 Render-ის URL
+  // import.meta.env-ით ვიღებთ მონაცემებს .env-დან
+  baseURL: import.meta.env.VITE_API_BASE_URL, 
   headers: {
     "Content-Type": "application/json",
   },
