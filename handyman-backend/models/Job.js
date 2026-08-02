@@ -17,14 +17,15 @@ const jobSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, "Please specify a category"],
+      // models/Job.js
       enum: [
-        "Plumbing",
-        "Electrical",
-        "Carpentry",
-        "Painting",
-        "Cleaning",
-        "Gardening",
-        "Other",
+        "სანტექნიკა",
+        "ელექტრიკა",
+        "დურგლობა",
+        "შეღებვა",
+        "დასუფთავება",
+        "მებაღეობა",
+        "სხვა",
       ],
     },
     district: {
@@ -33,7 +34,10 @@ const jobSchema = new mongoose.Schema(
     },
     address: {
       type: String,
-      required: [true, "Please add a complete address (street, house, apartment)"],
+      required: [
+        true,
+        "Please add a complete address (street, house, apartment)",
+      ],
     },
     budget: {
       type: Number,

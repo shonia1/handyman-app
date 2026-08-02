@@ -1,3 +1,4 @@
+// src/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import JobList from "./components/JobList";
@@ -10,6 +11,8 @@ import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AdminDashboard from "./components/AdminDashboard";
+// 🔥 პროფილის კომპონენტი (თუ არ გაქვთ, უნდა შექმნათ)
+import Profile from "./components/Profile"; 
 import { useAuth } from "./hooks/useAuth";
 import ClientDashboard from "./components/ClientDashboard";
 import CraftsmanDashboard from "./components/CraftsmanDashboard";
@@ -33,6 +36,8 @@ function App() {
         <Routes>
           <Route path="/" element={homeElement} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          {/* 🔥 ახალი მარშრუტი */}
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/jobs" element={<JobList />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/create" element={<ProtectedRoute><JobForm /></ProtectedRoute>} />

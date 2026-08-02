@@ -133,3 +133,41 @@ exports.getMe = async (req, res) => {
     res.status(400).json({ success: false, error: error.message });
   }
 };
+
+// @desc    Update user profile
+// @route   PATCH /api/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    // განაახლეთ მხოლოდ დასაშვები ველები
+    if (req.body.name) user.name = req.body.name;
+    if (req.body.phone) user.phone = req.body.phone;
+    if (req.body.profession && user.role === "craftsman") {
+      user.profession = Array.isArray(req.body.profession) 
+        ? req.body.profession 
+        : [req.body.profession];
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        profession: user.profession,
+        cities: user.cities,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};

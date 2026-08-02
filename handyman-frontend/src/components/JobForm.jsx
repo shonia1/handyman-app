@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from "../hooks/useAuth";
 import { CITIES } from "../constants/cities";
 
 function JobForm() {
@@ -12,21 +12,37 @@ function JobForm() {
   if (user && user.role !== "client") {
     return (
       <div className="container mx-auto px-4 py-8 max-w-lg text-center">
-        <h1 className="text-2xl font-bold text-red-600">⛔ წვდომა აკრძალულია</h1>
-        <p className="text-gray-600 mt-2">მხოლოდ კლიენტებს შეუძლიათ დავალების დამატება.</p>
-        <Link to="/" className="text-indigo-600 hover:underline mt-4 inline-block">← უკან</Link>
+        <h1 className="text-2xl font-bold text-red-600">
+          ⛔ წვდომა აკრძალულია
+        </h1>
+        <p className="text-gray-600 mt-2">
+          მხოლოდ კლიენტებს შეუძლიათ დავალების დამატება.
+        </p>
+        <Link
+          to="/"
+          className="text-indigo-600 hover:underline mt-4 inline-block"
+        >
+          ← უკან
+        </Link>
       </div>
     );
   }
 
   const [form, setForm] = useState({
-    title: "", description: "", category: "Plumbing", district: "", address: "",
-    budget: "", clientName: "", clientPhone: "",
+    title: "",
+    description: "",
+    category: "Plumbing",
+    district: "",
+    address: "",
+    budget: "",
+    clientName: "",
+    clientPhone: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -42,7 +58,9 @@ function JobForm() {
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8 max-w-lg">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">➕ ახალი დავალება</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
+        ➕ ახალი დავალება
+      </h1>
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -69,8 +87,18 @@ function JobForm() {
           onChange={handleChange}
           className="w-full border p-3 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
         >
-          {["Plumbing","Electrical","Carpentry","Painting","Cleaning","Gardening","Other"].map(c => (
-            <option key={c} value={c}>{c}</option>
+          {[
+            "სანტექნიკა",
+            "ელექტრიკა",
+            "დურგლობა",
+            "შეღებვა",
+            "დასუფთავება",
+            "მებაღეობა",
+            "სხვა",
+          ].map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
         <select
@@ -81,7 +109,11 @@ function JobForm() {
           className="w-full border p-3 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
         >
           <option value="">აირჩიეთ ქალაქი *</option>
-          {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+          {CITIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
         </select>
         <input
           type="text"
