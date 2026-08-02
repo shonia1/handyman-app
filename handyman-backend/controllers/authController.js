@@ -1,7 +1,7 @@
 // controllers/authController.js
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs"); // 🔥 დაგვჭირდება
+const bcrypt = require("bcryptjs"); // 🔥 დაგვჭირდება პაროლის შესადარებლად
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
@@ -83,7 +83,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ success: false, error: "Invalid credentials" });
     }
 
-    const isMatch = await user.matchPassword(password);
+    // 🔥 პირდაპირი bcrypt შედარება (არ ვიყენებთ matchPassword-ს)
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ success: false, error: "Invalid credentials" });
     }
