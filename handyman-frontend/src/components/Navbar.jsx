@@ -6,7 +6,8 @@ import { useState, useRef, useEffect } from "react";
 
 function Navbar() {
   const { user, logout } = useAuth();
-  const { notifications, unreadCount, markAsRead, markAllAsRead, loading } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, loading } =
+    useNotifications();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef();
@@ -57,7 +58,9 @@ function Navbar() {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50">
                     <div className="p-3 border-b border-gray-100 flex justify-between items-center">
-                      <span className="font-bold text-gray-800">შეტყობინებები</span>
+                      <span className="font-bold text-gray-800">
+                        შეტყობინებები
+                      </span>
                       {unreadCount > 0 && (
                         <button
                           onClick={markAllAsRead}
@@ -69,9 +72,13 @@ function Navbar() {
                     </div>
                     <div className="max-h-72 overflow-y-auto">
                       {loading ? (
-                        <div className="p-4 text-center text-gray-500">იტვირთება...</div>
+                        <div className="p-4 text-center text-gray-500">
+                          იტვირთება...
+                        </div>
                       ) : notifications.length === 0 ? (
-                        <div className="p-4 text-center text-gray-400">შეტყობინებები არ არის</div>
+                        <div className="p-4 text-center text-gray-400">
+                          შეტყობინებები არ არის
+                        </div>
                       ) : (
                         notifications.map((notif) => (
                           <div
@@ -81,7 +88,9 @@ function Navbar() {
                               !notif.read ? "bg-blue-50" : ""
                             }`}
                           >
-                            <p className="text-sm text-gray-800">{notif.message}</p>
+                            <p className="text-sm text-gray-800">
+                              {notif.message}
+                            </p>
                             <p className="text-xs text-gray-400 mt-1">
                               {new Date(notif.createdAt).toLocaleString()}
                             </p>
@@ -95,9 +104,13 @@ function Navbar() {
 
               <span className="text-sm bg-indigo-500 px-3 py-1 rounded-full">
                 {user.name} ({user.role})
-                {user.role === "craftsman" && user.profession && user.profession.length > 0 && (
-                  <span className="ml-1 text-xs">: {user.profession.join(", ")}</span>
-                )}
+                {user.role === "craftsman" &&
+                  user.profession &&
+                  user.profession.length > 0 && (
+                    <span className="ml-1 text-xs">
+                      : {user.profession.join(", ")}
+                    </span>
+                  )}
               </span>
 
               {user.role === "client" && (
@@ -139,11 +152,26 @@ function Navbar() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="md:hidden text-white focus:outline-none"
         >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             {mobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             )}
           </svg>
         </button>
@@ -190,7 +218,9 @@ function Navbar() {
                 {dropdownOpen && (
                   <div className="mt-2 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden max-h-60 overflow-y-auto">
                     {notifications.length === 0 ? (
-                      <div className="p-3 text-center text-gray-400 text-sm">შეტყობინებები არ არის</div>
+                      <div className="p-3 text-center text-gray-400 text-sm">
+                        შეტყობინებები არ არის
+                      </div>
                     ) : (
                       notifications.map((notif) => (
                         <div

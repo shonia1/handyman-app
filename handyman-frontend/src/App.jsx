@@ -9,30 +9,30 @@ import Login from "./components/Login";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
-import ClientDashboard from "./components/ClientDashboard"; // 🔥 ახალი იმპორტი
-import { lazy, Suspense } from "react";
+import { useAuth } from "./hooks/useAuth"; 
+import ClientDashboard from "./components/ClientDashboard";
+import CraftsmanDashboard from "./components/CraftsmanDashboard";
+import { lazy, Suspense, useMemo } from "react";
 
 function App() {
+  const { user } = useAuth();
+
+  // 🔥 ავტომატური მთავარი გვერდის დინამიკა
+  const homeElement = useMemo(() => {
+    if (!user) return <Home />;
+    if (user.role === "client") return <ClientDashboard />;
+    return <CraftsmanDashboard />;
+  }, [user]);
+
   return (
     <BrowserRouter>
       <GoogleAnalytics />
       <Navbar />
       <Suspense fallback={<div className="flex justify-center items-center h-64">იტვირთება...</div>}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={homeElement} />
           <Route path="/jobs" element={<JobList />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
-          
-          {/* 🔥 დაამატეთ ახალი დაცული მარშრუტი კლიენტისთვის */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <ClientDashboard />
-              </ProtectedRoute>
-            }
-          />
-
           <Route
             path="/create"
             element={
@@ -41,7 +41,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>

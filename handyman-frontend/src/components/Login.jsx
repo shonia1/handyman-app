@@ -1,7 +1,7 @@
 // src/components/Login.jsx
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "../hooks/useAuth"; // 🔥 ეს ჰუკი გამოვიყენოთ
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,8 +11,8 @@ const Login = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth(); // 🔥 ვიღებთ უშუალოდ login მეთოდს კონტექსტიდან
 
-  // 1. გავიგოთ, საიდან მოვიდა მომხმარებელი (მაგალითად /create-დან)
   const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
@@ -21,22 +21,12 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // 2. გავაგზავნოთ მოთხოვნა ბექენდზე
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
-        { email, password }
-      );
-
-      // 3. წარმატების შემთხვევაში, შევინახოთ ტოკენი
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        // 4. დავაბრუნოთ მომხმარებელი იქ, საიდანაც მოვიდა
-        navigate(from, { replace: true });
-      } else {
-        setError("მოხდა შეცდომა. გთხოვთ, სცადოთ თავიდან.");
-      }
+      // 🔥 აქ მნიშვნელოვანი ცვლილება: ვიყენებთ AuthProvider-ის login-ს (და არა შიშველ Axios-ს)
+      await login(email, password); 
+      
+      // კონტექსტი უკვე ზრუნავს setUser-ზე, უბრალოდ გადავდივართ
+      navigate(from, { replace: true });
     } catch (err) {
-      // 5. შეცდომის მართვა
       setError(
         err.response?.data?.message || 
         "ავტორიზაცია ვერ მოხერხდა. შეამოწმეთ მონაცემები."
