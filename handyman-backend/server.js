@@ -15,10 +15,9 @@ const bidRoutes = require("./routes/bidRoutes");
 const authRoutes = require("./routes/authRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const questionRoutes = require("./routes/questionRoutes");
-
 const sitemapRoutes = require("./routes/sitemapRoutes");
-app.use("/", sitemapRoutes);
 
+// 1. ჯერ ვქმნით app-ს!
 const app = express();
 
 // Connect to MongoDB
@@ -43,6 +42,7 @@ app.use(cors());
 app.use(express.json());
 
 // ─── Routes ───
+app.use("/", sitemapRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/bids", bidRoutes);
 app.use("/api/auth", authRoutes);
