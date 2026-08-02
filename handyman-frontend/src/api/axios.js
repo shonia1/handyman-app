@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://handyman-back-ulm6.onrender.com/api", // 🔥 Render-ის URL
+  baseURL: "https://handyman-back-p7yf.onrender.com", // 🔥 Render-ის URL
   headers: {
     "Content-Type": "application/json",
   },
