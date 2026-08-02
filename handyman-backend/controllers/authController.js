@@ -1,7 +1,7 @@
 // controllers/authController.js
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs"); // 🔥 დაგვჭირდება პაროლის შესადარებლად
+const bcrypt = require("bcryptjs");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
@@ -14,7 +14,6 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, phone, role, profession, cities } = req.body;
 
-    // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({
@@ -23,7 +22,6 @@ exports.register = async (req, res) => {
       });
     }
 
-    // 🔥 Hash password manually
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -35,7 +33,6 @@ exports.register = async (req, res) => {
       role: role || "client",
     };
 
-    // If craftsman – add profession and cities
     if (role === "craftsman") {
       userData.profession = Array.isArray(profession) ? profession : [profession];
       userData.cities = Array.isArray(cities) ? cities : [cities];
@@ -83,7 +80,6 @@ exports.login = async (req, res) => {
       return res.status(401).json({ success: false, error: "Invalid credentials" });
     }
 
-    // 🔥 პირდაპირი bcrypt შედარება (არ ვიყენებთ matchPassword-ს)
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ success: false, error: "Invalid credentials" });
@@ -134,7 +130,7 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
+// @desc    Update user profile (name, phone, profession)
 // @route   PATCH /api/auth/profile
 // @access  Private
 exports.updateProfile = async (req, res) => {
@@ -144,7 +140,6 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ success: false, error: "User not found" });
     }
 
-    // განაახლეთ მხოლოდ დასაშვები ველები
     if (req.body.name) user.name = req.body.name;
     if (req.body.phone) user.phone = req.body.phone;
     if (req.body.profession && user.role === "craftsman") {
@@ -169,5 +164,36 @@ exports.updateProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+// @desc    Update user password
+// @route   PUT /api/auth/password
+// @access  Private
+exports.updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: "გთხოვთ, მიუთითოთ მიმდინარე და ახალი პაროლი." });
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "მიმდინარე პაროლი არასწორია." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "პაროლი წარმატებით განახლდა!" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
