@@ -1,3 +1,4 @@
+// src/components/Register.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -8,6 +9,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("client");
+  const [profession, setProfession] = useState(""); // ✅ ახალი
+  const [cities, setCities] = useState([]); // ✅ ახალი
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,7 +21,12 @@ const Register = () => {
     setError("");
     setLoading(true);
     try {
-      await register({ name, email, password, phone, role });
+      const payload = { name, email, password, phone, role };
+      if (role === "craftsman") {
+        payload.profession = profession.split(",").map((s) => s.trim()).filter(Boolean);
+        payload.cities = cities;
+      }
+      await register(payload);
       navigate("/", { replace: true });
     } catch (err) {
       const serverMessage = err.response?.data?.message || err.response?.data?.error;
@@ -38,7 +46,37 @@ const Register = () => {
           <div><label className="block text-gray-700 text-sm font-bold mb-2">ელ-ფოსტა</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="შეიყვანეთ თქვენი ელ-ფოსტა" /></div>
           <div><label className="block text-gray-700 text-sm font-bold mb-2">პაროლი</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="შეიყვანეთ თქვენი პაროლი" /></div>
           <div><label className="block text-gray-700 text-sm font-bold mb-2">მობილური ნომერი</label><input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="შეიყვანეთ მობილურის ნომერი" /></div>
-          <div><label className="block text-gray-700 text-sm font-bold mb-2">ვინ ხართ?</label><select value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"><option value="client">კლიენტი (ვეძებ ხელოსანს)</option><option value="craftsman">ხელოსანი (ვეძებ შეკვეთას)</option></select></div>
+          <div><label className="block text-gray-700 text-sm font-bold mb-2">ვინ ხართ?</label><select value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            <option value="client">კლიენტი (ვეძებ ხელოსანს)</option>
+            <option value="craftsman">ხელოსანი (ვეძებ შეკვეთას)</option>
+          </select></div>
+
+          {/* ✅ პირობითი ველები ხელოსნისთვის */}
+          {role === "craftsman" && (
+            <>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">პროფესია (მძიმით გამოყოფილი)</label>
+                <input 
+                  type="text" 
+                  value={profession} 
+                  onChange={(e) => setProfession(e.target.value)} 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" 
+                  placeholder="მაგ. სანტექნიკა, ელექტრიკა" 
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">ქალაქები (მძიმით გამოყოფილი)</label>
+                <input 
+                  type="text" 
+                  value={cities.join(", ")} 
+                  onChange={(e) => setCities(e.target.value.split(",").map(s => s.trim()).filter(Boolean))} 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" 
+                  placeholder="მაგ. Tbilisi, Batumi" 
+                />
+              </div>
+            </>
+          )}
+
           <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">{loading ? "იტვირთება..." : "რეგისტრაცია"}</button>
         </form>
         <div className="mt-6 text-center text-sm text-gray-600">უკვე გაქვთ ანგარიში? <Link to="/login" className="text-blue-600 font-semibold hover:underline">შესვლა</Link></div>

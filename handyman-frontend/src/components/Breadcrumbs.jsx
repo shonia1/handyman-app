@@ -7,6 +7,8 @@ const Breadcrumbs = () => {
 
   if (pathnames.length === 0) return null;
 
+  const siteUrl = import.meta.env.VITE_SITE_URL || "https://handyman-ge.vercel.app"; // ✅ ცვლადი
+
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -15,13 +17,13 @@ const Breadcrumbs = () => {
         "@type": "ListItem",
         "position": 1,
         "name": "მთავარი",
-        "item": "https://handyman-marketplace.vercel.app/"
+        "item": `${siteUrl}/`
       },
       ...pathnames.map((name, index) => ({
         "@type": "ListItem",
         "position": index + 2,
         "name": decodeURIComponent(name),
-        "item": `https://handyman-marketplace.vercel.app/${pathnames.slice(0, index + 1).join('/')}`
+        "item": `${siteUrl}/${pathnames.slice(0, index + 1).join('/')}`
       }))
     ]
   };

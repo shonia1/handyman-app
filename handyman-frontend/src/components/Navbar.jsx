@@ -1,5 +1,5 @@
 // src/components/Navbar.jsx
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useNotifications } from "../hooks/useNotifications";
 import { useState, useRef, useEffect } from "react";
@@ -11,6 +11,7 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef();
+  const navigate = useNavigate(); // ✅ დავამატეთ
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -25,7 +26,7 @@ function Navbar() {
   const handleNotificationClick = (notification) => {
     markAsRead(notification._id);
     if (notification.relatedJob) {
-      window.location.href = `/jobs/${notification.relatedJob}`;
+      navigate(`/jobs/${notification.relatedJob}`); // ✅ სრული გადატვირთვის ნაცვლად
     }
     setDropdownOpen(false);
   };
@@ -103,7 +104,6 @@ function Navbar() {
                 {user.name} ({user.role})
               </span>
 
-              {/* 🔥 დესკტოპის მენიუს ახალი ღილაკი - ყველასთვის */}
               <Link
                 to="/profile"
                 className="bg-indigo-500 hover:bg-indigo-400 text-white px-4 py-2 rounded-lg font-semibold transition"
@@ -192,7 +192,6 @@ function Navbar() {
                 </button>
               </div>
 
-              {/* პროფილი */}
               <Link
                 to="/profile"
                 onClick={() => setMobileMenuOpen(false)}
@@ -201,7 +200,6 @@ function Navbar() {
                 👤 პროფილი
               </Link>
 
-              {/* სხვა როლის სპეციფიკური ღილაკები მობილურზე */}
               {user.role === "admin" && (
                 <Link
                   to="/admin"

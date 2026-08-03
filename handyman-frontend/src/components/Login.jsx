@@ -3,10 +3,10 @@ import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
-// 🔥 თუ გსურთ დაბლოკილი მომხმარებლებისთვის კონტაქტის მიწოდება, ჩაწერეთ ეს მნიშვნელობები
+// ✅ ახლა იღებს .env-დან
 const ADMIN_CONTACT = {
-  email: "dito@gmail.com", // თქვენი ადმინის მეილი
-  telegram: "https://t.me/your_telegram_bot_username", // თუ გსურთ ტელეგრამის ბმული
+  email: import.meta.env.VITE_ADMIN_EMAIL || "admin@example.com",
+  telegram: import.meta.env.VITE_ADMIN_TELEGRAM || "",
 };
 
 const Login = () => {
@@ -29,7 +29,6 @@ const Login = () => {
     } catch (err) {
       const errorMsg = err.response?.data?.error || "ავტორიზაცია ვერ მოხერხდა. შეამოწმეთ მონაცემები.";
       
-      // 🔥 თუ შეცდომაა და ის დაბლოკვაზე მიუთითებს
       if (err.response?.data?.isBanned || errorMsg.includes("banned") || errorMsg.includes("Account is banned")) {
         setError(
           <div className="space-y-2">

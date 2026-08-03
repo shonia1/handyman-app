@@ -21,9 +21,10 @@ function JobList() {
   const [filterByCity, setFilterByCity] = useState(true);
   const limit = 6;
 
+  // ქალაქების პარამეტრის მომზადება (მრავალი ქალაქის მხარდაჭერით)
   const getCityParam = () => {
     if (user?.role === "craftsman" && filterByCity && user.cities?.length) {
-      return user.cities[0];
+      return user.cities; // აბრუნებს მასივს
     }
     return "";
   };
@@ -40,7 +41,11 @@ function JobList() {
           showArchived,
         };
         const city = getCityParam();
-        if (city) params.city = city;
+        if (city && Array.isArray(city)) {
+          params.city = city; // გადაეცემა მასივი
+        } else if (city) {
+          params.city = city;
+        }
         if (user?.role === "client") params.myJobs = true;
 
         const response = await api.get("/jobs", { params });
@@ -69,9 +74,8 @@ function JobList() {
 
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl">
-      {/* 🔥 შეცვლილია title */}
       <SEO
-        title="განცხადებები – Handyman" 
+        title="განცხადებები – Handyman"
         description="ნახეთ ყველა აქტიური განცხადება. აირჩიეთ თქვენთვის სასურველი კატეგორია და ლოკაცია."
         url="/jobs"
       />
@@ -154,7 +158,7 @@ function JobList() {
         )}
       </div>
 
-      {/* Job Cards... */}
+      {/* Job Cards */}
       {jobs.length === 0 ? (
         <div className="text-center py-12 sm:py-20 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
           <p className="text-gray-400 text-lg sm:text-xl">
@@ -240,7 +244,31 @@ function JobList() {
           ))}
         </div>
       )}
-      {/* ... პაგინაცია ... */}
+
+      {/* Pagination - ახალი დამატებული ნაწილი */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-6 sm:mt-8">
+          <button
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition text-sm sm:text-base"
+          >
+            ← წინა
+          </button>
+          
+          <span className="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg font-semibold text-sm sm:text-base">
+            {page} / {totalPages}
+          </span>
+
+          <button
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition text-sm sm:text-base"
+          >
+            შემდეგი →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://handyman-marketplace.vercel.app/</loc>
+    <loc>https://handyman-ge.vercel.app/</loc>
     <lastmod>2026-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://handyman-marketplace.vercel.app/post-job</loc>
+    <loc>https://handyman-ge.vercel.app/post-job</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://handyman-marketplace.vercel.app/login</loc>
+    <loc>https://handyman-ge.vercel.app/login</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://handyman-marketplace.vercel.app/register</loc>
+    <loc>https://handyman-ge.vercel.app/register</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
