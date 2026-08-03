@@ -18,16 +18,7 @@ function JobList() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalJobs, setTotalJobs] = useState(0);
   const [showArchived, setShowArchived] = useState(false);
-  const [filterByCity, setFilterByCity] = useState(true);
   const limit = 6;
-
-  // ქალაქების პარამეტრის მომზადება (მრავალი ქალაქის მხარდაჭერით)
-  const getCityParam = () => {
-    if (user?.role === "craftsman" && filterByCity && user.cities?.length) {
-      return user.cities; // აბრუნებს მასივს
-    }
-    return "";
-  };
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -40,12 +31,7 @@ function JobList() {
           category,
           showArchived,
         };
-        const city = getCityParam();
-        if (city && Array.isArray(city)) {
-          params.city = city; // გადაეცემა მასივი
-        } else if (city) {
-          params.city = city;
-        }
+        // ქალაქის ფილტრი ამოღებულია – ყველა ხელოსანი ხედავს ყველა ქალაქის დავალებას
         if (user?.role === "client") params.myJobs = true;
 
         const response = await api.get("/jobs", { params });
@@ -59,7 +45,7 @@ function JobList() {
       }
     };
     fetchJobs();
-  }, [page, search, category, user, showArchived, filterByCity]);
+  }, [page, search, category, user, showArchived]);
 
   if (loading)
     return (
@@ -90,18 +76,6 @@ function JobList() {
           <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
             {totalJobs} ცალი
           </span>
-          {user?.role === "craftsman" && user.cities?.length > 0 && (
-            <button
-              onClick={() => setFilterByCity(!filterByCity)}
-              className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-lg transition ${
-                filterByCity
-                  ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              {filterByCity ? "📍 ჩემი ქალაქები" : "📍 ყველა ქალაქი"}
-            </button>
-          )}
           {user?.role === "client" && (
             <button
               onClick={() => setShowArchived(!showArchived)}
@@ -245,7 +219,7 @@ function JobList() {
         </div>
       )}
 
-      {/* Pagination - ახალი დამატებული ნაწილი */}
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 mt-6 sm:mt-8">
           <button

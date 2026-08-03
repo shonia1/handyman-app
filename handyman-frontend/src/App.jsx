@@ -11,11 +11,12 @@ import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AdminDashboard from "./components/AdminDashboard";
-import Profile from "./components/Profile"; 
+import Profile from "./components/Profile";
+import CraftsmanProfile from "./components/CraftsmanProfile"; // ✅ ახალი იმპორტი
 import { useAuth } from "./hooks/useAuth";
 import ClientDashboard from "./components/ClientDashboard";
 import CraftsmanDashboard from "./components/CraftsmanDashboard";
-import { lazy, Suspense, useMemo } from "react";
+import { Suspense, useMemo } from "react";
 
 function App() {
   const { user } = useAuth();
@@ -36,6 +37,7 @@ function App() {
           <Route path="/" element={homeElement} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/craftsman/:id" element={<CraftsmanProfile />} /> {/* ✅ ახალი მარშრუტი */}
           <Route path="/jobs" element={<JobList />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/create" element={<ProtectedRoute><JobForm /></ProtectedRoute>} />

@@ -1,5 +1,5 @@
 // src/components/Profile.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react"; // ✅ useEffect ამოღებულია
 import { useAuth } from "../hooks/useAuth";
 import api from "../api/axios";
 
@@ -15,7 +15,6 @@ const Profile = () => {
     profession: [],
   });
 
-  // 🔥 დავამატეთ confirmPassword ველი
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -25,17 +24,6 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
-
-  // ავტომატურად შეავსე ველები რედაქტირების დაწყებისას
-  useEffect(() => {
-    if (isEditing && user) {
-      setFormData({
-        name: user.name || "",
-        phone: user.phone || "",
-        profession: user.profession || [],
-      });
-    }
-  }, [isEditing, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,17 +69,15 @@ const Profile = () => {
     }
   };
 
-  // 🔥 პაროლის შენახვა (დამატებულია ვალიდაცია)
+  // პაროლის შენახვა
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     
-    // ველების შემოწმება
     if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
       setMessage({ type: "error", text: "❌ გთხოვთ, შეავსოთ ყველა ველი!" });
       return;
     }
 
-    // 🔥 ახალი პაროლების შედარება
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setMessage({ type: "error", text: "❌ ახალი პაროლები არ ემთხვევა ერთმანეთს!" });
       return;
@@ -127,7 +113,15 @@ const Profile = () => {
         <h1 className="text-2xl font-bold">👤 ჩემი პროფილი</h1>
         {!isEditing && (
           <button
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              // ✅ აქ გადავიტანეთ useEffect-ის ლოგიკა
+              setFormData({
+                name: user?.name || "",
+                phone: user?.phone || "",
+                profession: user?.profession || [],
+              });
+              setIsEditing(true);
+            }}
             className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
           >
             ✏️ რედაქტირება
@@ -258,7 +252,6 @@ const Profile = () => {
                       className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                     />
                   </div>
-                  {/* 🔥 დამატებულია ახალი პაროლის დადასტურების ველი */}
                   <div>
                     <label className="block text-gray-500 text-sm mb-1">გაიმეორეთ ახალი პაროლი</label>
                     <input
@@ -281,7 +274,7 @@ const Profile = () => {
               )}
             </div>
 
-            {/* 3. გაუქმების ღილაკი (მთლიანი რედაქტირებისთვის) */}
+            {/* 3. გაუქმების ღილაკი */}
             <div className="pt-2">
               <button
                 type="button"

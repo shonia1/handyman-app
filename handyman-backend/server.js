@@ -1,3 +1,4 @@
+// server.js
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv4first");
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -15,7 +16,7 @@ const authRoutes = require("./routes/authRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const sitemapRoutes = require("./routes/sitemapRoutes");
-const adminRoutes = require("./routes/adminRoutes"); // 🔥 დაამატეთ
+const adminRoutes = require("./routes/adminRoutes"); // 🔥 ადმინის როუტები
 
 const app = express();
 connectDB();
@@ -28,22 +29,25 @@ const corsOptions = {
   origin: [
     "https://handyman-ge.vercel.app",
     "http://localhost:5173",
-    "https://handyman-marketplace.vercel.app"
-  ],
+    "https://handyman-marketplace.vercel.app",
+    process.env.FRONTEND_URL // ✅ დაამატეთ ესეც, თუ .env-ში გაქვთ
+  ].filter(Boolean), // შლის null/undefined-ებს
   credentials: true,
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// ✅ მარშრუტების რეგისტრაცია (მოვაშორე /api პრეფიქსი, რადგან ფრონტენდი უგზავნის /admin/stats და ა.შ.)
 app.use("/", sitemapRoutes);
-app.use("/api/jobs", jobRoutes);
-app.use("/api/bids", bidRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/questions", questionRoutes);
-app.use("/api/admin", adminRoutes); // 🔥 მარშრუტის რეგისტრაცია
+app.use("/jobs", jobRoutes);
+app.use("/bids", bidRoutes);
+app.use("/auth", authRoutes);
+app.use("/notifications", notificationRoutes);
+app.use("/questions", questionRoutes);
+app.use("/admin", adminRoutes); 
 
+// Health check (სასურველია შევინარჩუნოთ /api/health ან შევცვალოთ /health)
 app.get("/api/health", (req, res) => res.status(200).json({ status: "OK" }));
 
 const PORT = process.env.PORT || 5000;

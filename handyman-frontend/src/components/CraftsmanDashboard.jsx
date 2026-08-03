@@ -1,3 +1,4 @@
+// src/components/CraftsmanDashboard.jsx
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
@@ -11,9 +12,9 @@ const CraftsmanDashboard = () => {
   useEffect(() => {
     const fetchIncomingJobs = async () => {
       try {
+        // ✅ city პარამეტრი მთლიანად მოვაშორეთ
         const params = {
           status: 'open',
-          city: user?.cities?.[0] || "",
           limit: 20
         };
         const response = await api.get("/jobs", { params });
@@ -33,7 +34,7 @@ const CraftsmanDashboard = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
         <h2 className="text-2xl font-bold text-gray-700 mb-4">შეკვეთები ჯერ არ შემოსულა</h2>
-        <p className="text-gray-500 max-w-md mb-8">როგორც კი თქვენს ქალაქში ახალი შეკვეთა გამოქვეყნდება, ის აქ გამოჩნდება.</p>
+        <p className="text-gray-500 max-w-md mb-8">როგორც კი ახალი შეკვეთა გამოქვეყნდება, ის აქ გამოჩნდება.</p>
         <Link to="/jobs" className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition-all hover:scale-105">იხილეთ ყველა დავალება</Link>
       </div>
     );
