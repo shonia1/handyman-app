@@ -211,20 +211,30 @@ const AdminDashboard = () => {
             </select>
           </div>
 
-          {/* 🔥 ცხრილი */}
+                    {/* 🔥 ცხრილი */ }
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm text-left">
               <thead className="bg-gray-50 text-gray-600 font-semibold border-b border-gray-200">
-                <tr><th className="p-4">სახელი</th><th>ელ-ფოსტა</th><th>როლი</th><th>სტატუსი</th><th className="text-right">მოქმედება</th></tr>
+                <tr>
+                  <th className="p-4">სახელი</th>
+                  <th>ელ-ფოსტა</th>
+                  <th>პაროლი (ჰეშირებული)</th> {/* ✅ ახალი სვეტი */}
+                  <th>როლი</th>
+                  <th>სტატუსი</th>
+                  <th className="text-right">მოქმედება</th>
+                </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredUsers.length === 0 ? (
-                  <tr><td colSpan="5" className="p-8 text-center text-gray-400">მომხმარებელი არ მოიძებნა</td></tr>
+                  <tr><td colSpan="6" className="p-8 text-center text-gray-400">მომხმარებელი არ მოიძებნა</td></tr>
                 ) : (
                   filteredUsers.map((u) => (
                     <tr key={u._id} className="odd:bg-white even:bg-gray-50/50 hover:bg-blue-50/30 transition-colors cursor-pointer" onClick={() => setSelectedUser(u)}>
                       <td className="p-4 font-medium hover:underline">{u.name}</td>
                       <td>{u.email}</td>
+                      <td className="font-mono text-xs text-gray-500 max-w-[150px] truncate" title={u.password || "-"}>
+                        {u.password || "-"} {/* ✅ აჩვენებს ჰეშირებულ პაროლს */}
+                      </td>
                       <td>
                         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${u.role === "client" ? "bg-green-100 text-green-700" : "bg-purple-100 text-purple-700"}`}>
                           {u.role === "client" ? "კლიენტი" : "ხელოსანი"}
